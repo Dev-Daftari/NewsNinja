@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 export class News extends Component {
     static defaultProps = {
         country: 'in',
-        pageSize : 8,
+        pageSize : 9,
         category : 'general'
     }
     static propTypes = {
@@ -80,6 +80,9 @@ export class News extends Component {
                   description={element.description}
                   imgUrl={element.urlToImage}
                   newsUrl={element.url}
+                  author={element.author}
+                  date={element.publishedAt}
+                  source={element.source.name}
                 />
               </div>
             );
