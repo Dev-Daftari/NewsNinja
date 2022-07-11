@@ -8,7 +8,10 @@ const News = (props) => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-
+  // console.log(props.country);
+  const capitalise = (name) => {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
   const updateNews = async () => {
     props.setProgress(10);
     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apikey}&page=${page}&pageSize=${props.pageSize}`;
@@ -27,7 +30,7 @@ const News = (props) => {
   useEffect(() => {
     updateNews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.country]);
 
   const HandleNext = async () => {
     setPage(page + 1);
@@ -41,25 +44,38 @@ const News = (props) => {
 
   return (
     <div className="container my-3">
-      <h1 className="text-center" style = {{marginTop: '65px'}}>NewsNinja - Headlines for today</h1>
+      <h1 className="text-center" style={{ marginTop: "65px" }}>
+        {props.category === "" ? "NewsNinja" : capitalise(props.category)} - Top
+        Headlines
+      </h1>
       {loading && <Spinner />}
       <div className="row">
         {!loading &&
-          articles.map((element) => {
-            return (
-              <div className="col-md-4" key={element.url}>
-                <NewsItem
-                  title={element.title}
-                  description={element.description}
-                  imgUrl={element.urlToImage}
-                  newsUrl={element.url}
-                  author={element.author}
-                  date={element.publishedAt}
-                  source={element.source.name}
-                />
-              </div>
-            );
-          })}
+          articles
+            .filter((element) => {
+              if (props.search === "") return element;
+              else {
+                return Object.values(element)
+                  .join(" ")
+                  .toLowerCase()
+                  .includes(props.search.toLowerCase().trim());
+              }
+            })
+            .map((element) => {
+              return (
+                <div className="col-md-4" key={element.url}>
+                  <NewsItem
+                    title={element.title}
+                    description={element.description}
+                    imgUrl={element.urlToImage}
+                    newsUrl={element.url}
+                    author={element.author}
+                    date={element.publishedAt}
+                    source={element.source.name}
+                  />
+                </div>
+              );
+            })}
       </div>
       <div className="container d-flex justify-content-between">
         <button
