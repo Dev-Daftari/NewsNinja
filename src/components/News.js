@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import PropTypes from "prop-types";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const News = (props) => {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   // console.log(props.country);
@@ -21,37 +22,54 @@ const News = (props) => {
     let parsedData = await data.json();
     props.setProgress(70);
     setArticles(parsedData.articles);
-    setLoading(false);
     setTotalResults(parsedData.totalResults);
-
+    setLoading(false);
     props.setProgress(100);
   };
 
+
+  const fetchMoreData = async () => {
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apikey}&page=${page+1}&pageSize=${props.pageSize}`;
+    setPage(page+1);
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    setArticles(articles.concat(parsedData.articles));
+    setTotalResults(parsedData.totalResults);
+  };
   useEffect(() => {
+    if(props.category !== '') document.title = `NewsNinja - ${capitalise(props.category)}`;
     updateNews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.country]);
 
-  const HandleNext = async () => {
-    setPage(page + 1);
-    updateNews();
-  };
+  // const HandleNext = async () => {
+  //   setPage(page + 1);
+  //   updateNews();
+  // };
 
-  const HandlePrev = async () => {
-    setPage(page - 1);
-    updateNews();
-  };
+  // const HandlePrev = async () => {
+  //   setPage(page - 1);
+  //   updateNews();
+  // };
+
+  
 
   return (
-    <div className="container my-3">
+    <>
       <h1 className="text-center" style={{ marginTop: "65px" }}>
         {props.category === "" ? "NewsNinja" : capitalise(props.category)} - Top
         Headlines
       </h1>
-      {loading && <Spinner />}
-      <div className="row">
-        {!loading &&
-          articles
+      {loading && <Spinner />} 
+      <InfiniteScroll
+          dataLength={articles.length}
+          next={fetchMoreData}
+          hasMore={articles.length !== totalResults}
+          loader={<Spinner/>}
+        >
+          <div className="container">
+      <div className="row">   
+        {articles
             .filter((element) => {
               if (props.search === "") return element;
               else {
@@ -77,7 +95,9 @@ const News = (props) => {
               );
             })}
       </div>
-      <div className="container d-flex justify-content-between">
+      </div>
+      </InfiniteScroll>
+      {/* <div className="container d-flex justify-content-between"> // Previous , Next Buttons
         <button
           disabled={page <= 1}
           type="button"
@@ -95,8 +115,8 @@ const News = (props) => {
         >
           Next &rarr;
         </button>
-      </div>
-    </div>
+      </div> */}
+    </>
   );
 };
 
