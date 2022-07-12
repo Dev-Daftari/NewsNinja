@@ -25,7 +25,7 @@ const News = (props) => {
     setTotalResults(parsedData.totalResults);
     setLoading(false);
     props.setProgress(100);
-  };
+};
 
 
   const fetchMoreData = async () => {
@@ -37,7 +37,7 @@ const News = (props) => {
     setTotalResults(parsedData.totalResults);
   };
   useEffect(() => {
-    if(props.category !== '') document.title = `NewsNinja - ${capitalise(props.category)}`;
+    props.category !== ''? document.title = `NewsNinja - ${capitalise(props.category)}` : document.title = `NewsNinja - Your Daily Dose Of News`;
     updateNews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.country]);
