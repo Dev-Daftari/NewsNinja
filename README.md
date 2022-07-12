@@ -18,6 +18,13 @@ ___
 ![Home](./previews/home.png)
 ### Sports Category
 ![Sports](./previews/sports.png)
+![Sports2](./previews/sports2.png)
+### Country-wise News
+![Choice](./previews/choice.png)
+![US](./previews/us.png)
+### Search
+![Source](./previews/source.png)
+![Text](./previews/text.png)
 ### Loading spinner and Loading Bar
 ![Loading](./previews/loading.png)
 
